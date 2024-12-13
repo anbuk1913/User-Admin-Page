@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(45deg, #057979, #d8feff, #fbc2eb, #a18cd1, #2febe5);
+            background-size: 400% 400%;
+            animation: gradientAnimation 20s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        .container h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            text-align: left;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .back-button {
+            margin-top: 10px;
+            padding: 5px 15px;
+            background-color: #007bff;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Edit Profile</h1>
+        <form action="/update/profile?_method=PUT" method="post">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="username" value="<%=users?.name%>" />
+                <div class="error" id="username-error">*Username must contain only alphabets</div>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" maxlength="10" pattern="[0-9]*" id="phone" name="phone" value="<%=users?.phone%>">
+                <div class="error" id="phone-error">*Phone number must contain only digits</div>
+            </div>
+            <input type="text" id="hidden-input" value="<%=users?._id%>" name="id" style="display: none;">
+            <button type="submit">Save Changes</button>
+        </form>
+        <form action="/admin" method="get">
+            <button type="submit" class="back-button">Back to Home</button>
+        </form>
+    </div>
+    <script>
+        // Validate username on blur
+        document.getElementById("name").addEventListener("blur", function () {
+            validateUsername();
+        });
+
+        // Validate phone number on blur
+        document.getElementById("phone").addEventListener("blur", function () {
+            validatePhone();
+        });
+
+        // Validate the form on submit
+        document.querySelector("form[action='/update/profile?_method=PUT']").addEventListener("submit", function (event) {
+            const isUsernameValid = validateUsername();
+            const isPhoneValid = validatePhone();
+
+            if (!isUsernameValid || !isPhoneValid) {
+                event.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
+
+        // Function to validate username
+        function validateUsername() {
+            const nameInput = document.getElementById("name").value.trim();
+            const nameError = document.getElementById("username-error");
+
+            if (nameInput === "" || !/^[a-zA-Z\s]+$/.test(nameInput)){
+                nameError.textContent = "*Username is required and must contain only alphabets";
+                nameError.style.display = "block";
+                return false;
+            } else {
+                nameError.style.display = "none";
+                return true;
+            }
+        }
+
+        // Function to validate phone number
+        function validatePhone() {
+            const phoneInput = document.getElementById("phone").value.trim();
+            const phoneError = document.getElementById("phone-error");
+
+            if (!/^\d{10}$/.test(phoneInput)) {
+                phoneError.textContent = "*Phone number is required and must contain exactly 10 digits";
+                phoneError.style.display = "block";
+                return false;
+            } else {
+                phoneError.style.display = "none";
+                return true;
+            }
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign-Up Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(45deg, #057979, #d8feff, #fbc2eb, #a18cd1, #2febe5);
+      background-size: 400% 400%;
+      animation: gradientAnimation 20s ease infinite;
+    }
+
+    @keyframes gradientAnimation {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .signup-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .signup-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    .form-group input {
+      width: 94%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .form-group input:focus {
+      border-color: #28a745;
+      outline: none;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease, border-radius 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #218838;
+      border-radius: 20px;
+    }
+
+    .already-member {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .already-member a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .already-member a:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      color: red;
+      padding-left: 3px;
+      font-size: 0.8rem;
+    }
+
+    input.error {
+      border-color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="signup-container">
+    <h2>Sign Up</h2>
+    <form id="signUpForm" action="/signup" method="POST">
+      <div class="form-group">
+        <label for="username">Name</label>
+        <input type="text" id="username" name="username">
+        <div class="error" style="display: none;" id="username-error">*Username is required</div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" name="email">
+        <div class="error" style="display: none;" id="email-error">*Invalid email format</div>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" maxlength="10" pattern="[0-9]*" id="phone" name="phone">
+        <div class="error" style="display: none;" id="phone-error">*Invalid phone number</div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password">
+        <div class="error" style="display: none;" id="password-error">*Password is required</div>
+      </div>
+      <div class="form-group">
+        <label for="confirm-password">Confirm Password</label>
+        <input type="password" id="confirm-password" name="confirm-password">
+        <div class="error" style="display: none;" id="confirm-password-error">*Please confirm your password</div>
+      </div>
+      <% if (signError) { %>
+        <p style="color: red;">
+          <%=signError%>
+        </p>
+        <% } %>
+          <button type="submit" class="btn">Sign Up</button>
+    </form>
+    <div class="already-member">
+      <p>Already have an account? <a href="/">Login here</a></p>
+    </div>
+  </div>
+  <script>
+    // Get the form and elements
+    const form = document.getElementById('signUpForm');
+    const username = document.getElementById('username');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm-password');
+
+    // Get error messages
+    const usernameError = document.getElementById('username-error');
+    const emailError = document.getElementById('email-error');
+    const passwordError = document.getElementById('password-error');
+    const confirmPasswordError = document.getElementById('confirm-password-error');
+
+    // Get the phone number input and error message
+    const phone = document.getElementById('phone');
+    const phoneError = document.getElementById('phone-error');
+
+    // Phone number regex for validation (10 digits, numeric only)
+    const phoneRegex = /^[0-9]{10}$/;
+
+    // Validate phone number on form submission
+    form.addEventListener('submit', function (event) {
+      let valid = true;
+
+      // Clear previous error messages
+      phoneError.style.display = 'none';
+
+      // Phone number validation
+      if (phone.value.trim() === '') {
+        valid = false;
+        phoneError.textContent = '*Phone number is required';
+        phoneError.style.display = 'block';
+      } else if (!phoneRegex.test(phone.value)) {
+        valid = false;
+        phoneError.textContent = '*Phone number must be 10 digits';
+        phoneError.style.display = 'block';
+      }
+
+      // If validation fails, prevent form submission
+      if (!valid) {
+        event.preventDefault();
+      }
+    });
+
+    // Regular expressions for validation
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    const usernameRegex = /^[a-zA-Z\s]+$/; // Only alphabets
+    const passwordRegex = /^(?=.*\d)[^\s]{8,}$/; // At least 8 characters, 1 number, no spaces
+
+    // Validate on form submit
+    form.addEventListener('submit', function (event) {
+      let valid = true;
+
+      // Clear previous error messages
+      usernameError.style.display = 'none';
+      emailError.style.display = 'none';
+      passwordError.style.display = 'none';
+      confirmPasswordError.style.display = 'none';
+
+      // Username validation
+      if (username.value.trim() === '') {
+        valid = false;
+        usernameError.textContent = '*Username is required';
+        usernameError.style.display = 'block';
+      } else if (!usernameRegex.test(username.value)) {
+        valid = false;
+        usernameError.textContent = '*Username must contain only alphabets';
+        usernameError.style.display = 'block';
+      }
+
+      // Email validation
+      if (email.value.trim() === '') {
+        valid = false;
+        emailError.textContent = '*Email is required';
+        emailError.style.display = 'block';
+      } else if (!emailRegex.test(email.value)) {
+        valid = false;
+        emailError.textContent = '*Invalid email format';
+        emailError.style.display = 'block';
+      }
+
+      // Restrict input to numbers only
+      phone.addEventListener('input', function () {
+        phone.value = phone.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+      });
+
+      // Phone number validation on blur
+      phone.addEventListener('blur', function () {
+        if (phone.value.trim() === '') {
+          phoneError.textContent = '*Phone number is required';
+          phoneError.style.display = 'block';
+        } else if (phone.value.length !== 10) {
+          phoneError.textContent = '*Phone number must be 10 digits';
+          phoneError.style.display = 'block';
+        } else {
+          phoneError.style.display = 'none';
+        }
+      });
+
+
+      // Password validation
+      if (password.value.trim() === '') {
+        valid = false;
+        passwordError.textContent = '*Password is required';
+        passwordError.style.display = 'block';
+      } else if (!passwordRegex.test(password.value)) {
+        valid = false;
+        passwordError.textContent = '*Password must be at least 8 characters, include 1 number, and contain no spaces';
+        passwordError.style.display = 'block';
+      }
+
+      // Confirm password validation
+      if (confirmPassword.value.trim() === '') {
+        valid = false;
+        confirmPasswordError.textContent = '*Confirm Password is required';
+        confirmPasswordError.style.display = 'block';
+      } else if (confirmPassword.value !== password.value) {
+        valid = false;
+        confirmPasswordError.textContent = '*Passwords do not match';
+        confirmPasswordError.style.display = 'block';
+      }
+
+      // If validation fails, prevent form submission
+      if (!valid) {
+        event.preventDefault();
+      }
+    });
+
+    // Blur event for email validation
+    email.addEventListener('blur', function () {
+      if (email.value.trim() === '') {
+        emailError.textContent = '*Email is required';
+        emailError.style.display = 'block';
+      } else if (!emailRegex.test(email.value)) {
+        emailError.textContent = '*Invalid email format';
+        emailError.style.display = 'block';
+      } else {
+        emailError.style.display = 'none';
+      }
+    });
+
+    // Blur event for username validation
+    username.addEventListener('blur', function () {
+      if (username.value.trim() === '') {
+        usernameError.textContent = '*Username is required';
+        usernameError.style.display = 'block';
+      } else if (!usernameRegex.test(username.value)) {
+        usernameError.textContent = '*Username must contain only alphabets';
+        usernameError.style.display = 'block';
+      } else {
+        usernameError.style.display = 'none';
+      }
+    });
+
+  </script>
+</body>
+
+</html>
